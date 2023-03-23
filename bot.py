@@ -18,7 +18,9 @@ async def on_ready():
     # for guild in client.guilds:
     #     if guild.name == GUILD:
     #         break
-    guild = discord.utils.find(lambda g: g.name == GUILD, client.guilds)
+    # guild = discord.utils.find(lambda g: g.name == GUILD, client.guilds)
+    # get() takes the iterable and some keyword arguments, in this case name=GUILD
+    guild = discord.utils.get(client.guilds, name=GUILD)
     print(
         f'{client.user} is connected to the following guild:\n'
         f'{guild.name}(id: {guild.id})'

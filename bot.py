@@ -2,17 +2,26 @@
 import os, random
 
 import discord
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-# GUILD = os.getenv('DISCORD_GUILD')
+GUILD = os.getenv('DISCORD_GUILD')
 
-client = discord.Client(intents=discord.Intents.default())
+intent = discord.Intents.default()
+intent.members = True
+intent.message_content = True
+client = discord.Client(intents=intent)
+
 
 @client.event
 async def on_ready():
+    guild = discord.utils.get(client.guilds, name=GUILD)
+
     print(f'{client.user.name} has connected to Discord!')
+    print(f'{client.user} is connected to the following guild:\n'
+        f'{guild.name}(id: {guild.id})')
 
 @client.event
 async def on_member_join(member):
@@ -40,6 +49,26 @@ async def on_message(message):
     if message.content == '99!':
         response = random.choice(brooklyn_99_quotes)
         await message.channel.send(response)
+    elif message.content == 'raise-exception':
+        raise discord.DiscordException
+    
+bot = commands.Bot(command_prefix='!', intents = discord.Intents.default())
+
+@bot.command(name='99', help='Responds with a random quote from Brooklyn 99')
+async def nine_nine(ctx):
+    brooklyn_99_quotes = [
+        'I\'m the human form of the 💯 emoji.',
+        'Bingpot!',
+        (
+            'Cool. Cool cool cool cool cool cool cool, '
+            'no doubt no doubt no doubt no doubt.'
+        ),
+    ]
+
+    response = random.choice(brooklyn_99_quotes)
+    await ctx.send(response)
+
+bot.run(TOKEN)
 
 client.run(TOKEN)
 
